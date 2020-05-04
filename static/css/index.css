@@ -1,0 +1,45 @@
+/*html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+}
+
+#app {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#decision-page {
+    height: 100%;
+}
+
+*/
+
+#decision-page .row, .col {
+    margin-top: 35px;
+}
+
+#decision-page .col h3 {
+    text-align: center;
+    margin-top: 40px;
+}
+
+#decision-page h1 {
+    text-align: center;
+}
+
+#decision-page img {
+    margin: auto;
+    display: block;
+}
+
+#control-page h1, #control-page .center {
+    text-align: center;
+}
+
+#control-page img {
+    margin: auto;
+    display: block;
+}

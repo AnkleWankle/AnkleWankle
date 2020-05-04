@@ -23,6 +23,11 @@ app.use('/static/img', express.Router().use('/', express.static('static/img', {
     fallthrough: false
 })));
 
+// serve the files in static/css/ for clients requesting /static/css/
+app.use('/static/css', express.Router().use('/', express.static('static/css', {
+    fallthrough: false
+})));
+
 app.get('/', (req, res, next) => {
     // someone just requested the index page of our site, they're not yet in a room
     // forward them to a new room
