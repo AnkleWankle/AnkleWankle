@@ -3,7 +3,6 @@ export namespace Protocol {
 
     export const READY = "ready";
     export const DRAW_STAR = "drawStar";
-    export const CHOOSE_DEVICE = "chooseDevice";
 
     export function on<MessageType extends string, OnReturnType>(socket: SocketI<OnReturnType, any>, messageType: MessageType, callback: CallbackTypeFromMessageType<MessageType>) {
         return socket.on(messageType, function(this: any, ...args: any[]) {
@@ -17,12 +16,13 @@ export namespace Protocol {
         return socket.emit(messageType, ...args);
     }
 
+    export type DeviceType = "display" | "control";
+
     //
 
     export type CallbackTypeFromMessageType<MessageType extends string> =
-        (MessageType extends typeof READY ? ((roomId: string) => void) : never)
-        | (MessageType extends typeof DRAW_STAR ? ((...args: Parameters<PIXI.Graphics["drawStar"]>) => void) : never)
-        | (MessageType extends typeof CHOOSE_DEVICE ? () => void : never);
+        (MessageType extends typeof READY ? ((deviceType: DeviceType, roomId: string) => void) : never)
+        | (MessageType extends typeof DRAW_STAR ? ((...args: Parameters<PIXI.Graphics["drawStar"]>) => void) : never);
 
     export interface SocketI<OnReturnType, EmitReturnType> {
         on: (messageType: string, callback: (...args: any[]) => void) => OnReturnType;

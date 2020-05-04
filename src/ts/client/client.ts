@@ -9,10 +9,15 @@ import { DeviceDecisionComponent } from './components/DeviceDecisionComponent';
 // connect via socket.io
 let socket = io();
 
+let currentPixiApp: PIXI.Application | undefined = undefined;
+let drawStarQueue: Parameters<Protocol.CallbackTypeFromMessageType<typeof Protocol.DRAW_STAR>>[] = [];
+
 // set up Vue
 let app = new Vue({
     el: '#app',
-    data: {device: null},
+    data: () => ({
+        deviceType: undefined as (undefined | Protocol.DeviceType)
+    }),
     components: {
         GraphicsComponent: GraphicsComponent,
         ControlDeviceComponent: ControlDeviceComponent,
@@ -20,32 +25,43 @@ let app = new Vue({
     },
     methods: {
         pixiApp(pixiApp: PIXI.Application) {
-
             // this function is called when GraphicsComponent fires its 'pixi-app' event to signal that we're ready to draw
+            currentPixiApp = pixiApp;
 
-            // let's tell the server the room we're in
-            Protocol.emit(socket, Protocol.READY, location.pathname.replace(/^\//, "").split("/")[0]);
+            console.log(`PIXI app ready, number of queued draw star messages: ${drawStarQueue.length}`);
 
-            Protocol.on(socket, Protocol.DRAW_STAR, (...args) => {
-                if(pixiApp) {
-                    let graphics = new PIXI.Graphics();
-                    graphics.beginFill(0x00FF00);
-                    graphics.drawStar(...args);
-                    graphics.endFill();
-                    graphics.x = pixiApp.view.width/2;
-                    graphics.y = pixiApp.view.height/2;
-                    pixiApp.stage.addChild(graphics);
-                }
-            });
+            // if we already received any draw star messages before the pixi app became ready, draw them now
+            for(let args of drawStarQueue) { // drawStartQueue might be empty
+                drawStar(pixiApp, args);
+            }
+            drawStarQueue = [];
         },
-        deviceDecision() {
-            // let's tell the server the room we're in
-            Protocol.emit(socket, Protocol.READY, location.pathname.replace(/^\//, "").split("/")[0]);
+        onDeviceTypeSet(deviceType: Protocol.DeviceType) {
+            // this function is called when DeviceDecisionComponent fires its 'device-type-set' event to signal that the user set the type of this device
+            // let's tell the server that device type and the room we're in
+            Protocol.emit(socket, Protocol.READY, deviceType, location.pathname.replace(/^\//, "").split("/")[0]);
 
-            Protocol.on(socket, Protocol.CHOOSE_DEVICE, () => {
-                //alert("CHOOSE DEVICE");
-            });
+            this.deviceType = deviceType;
         }
+    }
+});
 
+function drawStar(pixiApp: PIXI.Application, args: Parameters<PIXI.Graphics["drawStar"]>) {
+    let graphics = new PIXI.Graphics();
+    graphics.beginFill(0x00FF00);
+    graphics.drawStar(...args);
+    graphics.endFill();
+    graphics.x = pixiApp.view.width/2;
+    graphics.y = pixiApp.view.height/2;
+    pixiApp.stage.addChild(graphics);
+}
+
+Protocol.on(socket, Protocol.DRAW_STAR, (...args) => {
+    if(currentPixiApp !== undefined) {
+        // pixi app is already ready, draw the star
+        drawStar(currentPixiApp, args);
+    } else {
+        // pixi app is not ready yet, queue the request
+        drawStarQueue.push(args);
     }
 });
