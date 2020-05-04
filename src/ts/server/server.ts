@@ -43,7 +43,8 @@ io.on('connection', (socket) => {
         console.log(`client is ready and in room ${roomId}`)
 
         // let's tell the client to draw a random star
-        Protocol.emit(socket, Protocol.DRAW_STAR, /*x*/ 0, /*y*/ 0, /*number*/ 5 + Math.floor(Math.random() * 5), /*outer radius*/ 100 + (Math.random() * 100), /*inner radius*/ 50 + (Math.random() * 50));
+        //Protocol.emit(socket, Protocol.DRAW_STAR, /*x*/ 0, /*y*/ 0, /*number*/ 5 + Math.floor(Math.random() * 5), /*outer radius*/ 100 + (Math.random() * 100), /*inner radius*/ 50 + (Math.random() * 50));
+        Protocol.emit(socket, Protocol.CHOOSE_DEVICE);
 
     });
 });

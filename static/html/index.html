@@ -6,7 +6,9 @@
     </head>
     <body>
         <div id="app">
-            <graphics-component v-on:pixi-app="pixiApp"></graphics-component>
+            <graphics-component v-if="device == 'display'" v-on:pixi-app="pixiApp"></graphics-component>
+            <device-decision-component v-if="device == null" v-on:device-decision="deviceDecision"></device-decision-component>
+            <control-device-component v-if="device == 'control'" v-on:device-decision></control-device-component>
         </div>
 
         <script src="/socket.io/socket.io.js"></script>

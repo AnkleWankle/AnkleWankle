@@ -3,6 +3,8 @@ import * as PIXI from 'pixi.js';
 
 import { GraphicsComponent } from './components/GraphicsComponent';
 import { Protocol } from '../common/protocol/Protocol';
+import { ControlDeviceComponent } from './components/ControlDeviceComponent';
+import { DeviceDecisionComponent } from './components/DeviceDecisionComponent';
 
 // connect via socket.io
 let socket = io();
@@ -10,8 +12,11 @@ let socket = io();
 // set up Vue
 let app = new Vue({
     el: '#app',
+    data: {device: null},
     components: {
-        GraphicsComponent: GraphicsComponent
+        GraphicsComponent: GraphicsComponent,
+        ControlDeviceComponent: ControlDeviceComponent,
+        DeviceDecisionComponent: DeviceDecisionComponent
     },
     methods: {
         pixiApp(pixiApp: PIXI.Application) {
@@ -32,7 +37,15 @@ let app = new Vue({
                     pixiApp.stage.addChild(graphics);
                 }
             });
+        },
+        deviceDecision() {
+            // let's tell the server the room we're in
+            Protocol.emit(socket, Protocol.READY, location.pathname.replace(/^\//, "").split("/")[0]);
 
+            Protocol.on(socket, Protocol.CHOOSE_DEVICE, () => {
+                //alert("CHOOSE DEVICE");
+            });
         }
+
     }
 });
