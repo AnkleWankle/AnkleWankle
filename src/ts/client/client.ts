@@ -5,6 +5,7 @@ import { GraphicsComponent } from './components/GraphicsComponent';
 import { Protocol } from '../common/protocol/Protocol';
 import { ControlDeviceComponent } from './components/ControlDeviceComponent';
 import { DeviceDecisionComponent } from './components/DeviceDecisionComponent';
+import {DisplaySidebarComponent} from "./components/DisplaySidebarComponent";
 
 // connect via socket.io
 let socket = io();
@@ -21,7 +22,8 @@ let app = new Vue({
     components: {
         GraphicsComponent: GraphicsComponent,
         ControlDeviceComponent: ControlDeviceComponent,
-        DeviceDecisionComponent: DeviceDecisionComponent
+        DeviceDecisionComponent: DeviceDecisionComponent,
+        DisplaySidebarComponent: DisplaySidebarComponent
     },
     methods: {
         pixiApp(pixiApp: PIXI.Application) {
