@@ -52,3 +52,11 @@ body {
     right: 30px;
     background-color: #818182; /* Grey */
 }
+.center {
+    text-align: center;
+}
+.column {
+    float: left;
+    width: 50%;
+    padding: 5px;
+}
