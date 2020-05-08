@@ -4,12 +4,16 @@ import * as http from 'http';
 import * as socketIo from 'socket.io';
 import { Protocol } from '../common/protocol/Protocol';
 import { NeverError } from "../common/util/NeverError";
+import { Room } from "./room/Room";
+import { Client } from "./client/Client";
 
 const LISTEN_PORT = 8080;
 
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer);
+
+const roomRegistry = new Map<string, Room>();
 
 //
 
@@ -46,28 +50,10 @@ app.get('/', express.static('static/html'));
 
 //
 
+let nextClientId = 0;
+
 io.on('connection', (socket) => {
-    console.log('socket.io connection!');
-
-    Protocol.on(socket, Protocol.READY, (deviceType, roomId) => {
-
-        console.log(`client is ready, device type ${deviceType}, room ${roomId}`);
-
-        switch(deviceType) {
-            case "display": {
-                // let's tell the client to draw a random star
-                Protocol.emit(socket, Protocol.DRAW_STAR, /*x*/ 0, /*y*/ 0, /*number*/ 5 + Math.floor(Math.random() * 5), /*outer radius*/ 100 + (Math.random() * 100), /*inner radius*/ 50 + (Math.random() * 50));
-                break;
-            }
-            case "control": {
-                break;
-            }
-            default: {
-                throw new NeverError(deviceType); // the compiler will tell us at compile time if we forget to handle a possible device type case in this switch statement
-            }
-        }
-
-    });
+    new Client(nextClientId++, socket, roomRegistry);
 });
 
 //

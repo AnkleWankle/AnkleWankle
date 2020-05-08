@@ -4,12 +4,18 @@ import {Timer} from "../Timer";
 
 export const DisplaySidebarComponent = Vue.extend({
     data: () => ({
-        connected: false, //TODO
         paused: true,
         loc: location,
         timer: new Timer(),
         device: "Some device" //TODO
     }),
+    props: {
+        connected: {
+            type: Boolean,
+            default: false,
+            required: true
+        }
+    },
     template: `
     <div class="sidebar">
         <div class="bottom-border">
@@ -21,7 +27,7 @@ export const DisplaySidebarComponent = Vue.extend({
             <div class="row">
                 <div class="col">
                     <img class="imgcenter" width="80" height="80" src="/static/img/hourglass-icon.png">
-                    <h3 class="textcenter"> {{timer.minSec}}</h3>  
+                    <h3 class="textcenter"> {{timer.minSec}}</h3>
                 </div>
             </div>
             <div class="row">
@@ -35,7 +41,7 @@ export const DisplaySidebarComponent = Vue.extend({
                     <img v-on:click="reset()" width="80" height="80" class="imgcenter" src="/static/img/reset-button.png">
                 </div>
             </div>
-        </div>       
+        </div>
         <div>
             <div class="row">
                 <div class="col">
@@ -49,8 +55,8 @@ export const DisplaySidebarComponent = Vue.extend({
             </div>
             <div class="row">
                 <div class="col">
-                    <p v-if="connected" style="font-size: 130%" class="textcenter"> <b>Status:</b> <span class="badge badge-pill badge-success"> connected </span> </p> 
-                    <p v-if="!connected" style="font-size: 130%" class="textcenter"> <b>Status:</b> <span class="badge badge-pill badge-danger"> not connected </span> </p> 
+                    <p v-if="connected" style="font-size: 130%" class="textcenter"> <b>Status:</b> <span class="badge badge-pill badge-success"> connected </span> </p>
+                    <p v-if="!connected" style="font-size: 130%" class="textcenter"> <b>Status:</b> <span class="badge badge-pill badge-danger"> not connected </span> </p>
                 </div>
             </div>
             <div class="row">
