@@ -58,6 +58,7 @@ function drawStar(pixiApp: PIXI.Application, args: Parameters<PIXI.Graphics["dra
     pixiApp.stage.addChild(graphics);
 }
 
+
 Protocol.on(socket, Protocol.DRAW_STAR, (...args) => {
     if(currentPixiApp !== undefined) {
         // pixi app is already ready, draw the star
