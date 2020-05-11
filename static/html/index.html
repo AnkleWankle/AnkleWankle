@@ -3,10 +3,15 @@
     <head>
         <meta charset="UTF-8">
         <title>AnkleWankle</title>
+        <link rel="stylesheet" type="text/css" href="/static/css/index.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
     </head>
     <body>
-        <div id="app">
-            <graphics-component v-on:pixi-app="pixiApp"></graphics-component>
+        <div id="app" class="align-middle">
+            <device-decision-component v-if="deviceType === undefined" v-on:device-type-set="onDeviceTypeSet"></device-decision-component>
+            <graphics-component v-if="deviceType === 'display'" v-on:pixi-app="pixiApp"></graphics-component>
+            <display-sidebar-component v-if="deviceType === 'display'"></display-sidebar-component>
+            <control-device-component v-if="deviceType === 'control'"></control-device-component>
         </div>
 
         <script src="/socket.io/socket.io.js"></script>

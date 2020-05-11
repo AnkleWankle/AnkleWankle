@@ -1,0 +1,72 @@
+/*html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+}
+
+#app {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#decision-page {
+    height: 100%;
+}
+
+*/
+
+#decision-page .row, .col {
+    margin-top: 35px;
+}
+
+#decision-page .col h3 {
+    text-align: center;
+    margin-top: 40px;
+}
+
+#decision-page h1 {
+    text-align: center;
+}
+
+#decision-page img {
+    margin: auto;
+    display: block;
+}
+
+#control-page h1, #control-page .center {
+    text-align: center;
+}
+
+#control-page img {
+    margin: auto;
+    display: block;
+}
+.sidebar {
+    height: 100%; /* Full-height: remove this if you want "auto" height */
+    width: 17%; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    right: 0px;
+    background-color: #909090; /* Grey */
+    border-style: solid;
+
+}
+.textcenter {
+    text-align: center;
+}
+.column {
+    float: left;
+    width: 50%;
+    padding: 5px;
+}
+.imgcenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.bottom-border {
+    border-bottom-style: solid;
+}
