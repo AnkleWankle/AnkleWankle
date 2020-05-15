@@ -7,7 +7,7 @@ export const DisplaySidebarComponent = Vue.extend({
         paused: true,
         loc: location,
         timer: new Timer(),
-        device: "Some device" //TODO
+        //device: "Some device" // wird gestrichen
     }),
     props: {
         connected: {
@@ -59,11 +59,11 @@ export const DisplaySidebarComponent = Vue.extend({
                     <p v-if="!connected" style="font-size: 130%" class="textcenter"> <b>Status:</b> <span class="badge badge-pill badge-danger"> not connected </span> </p>
                 </div>
             </div>
-            <div class="row">
+            <!--<div class="row">
                 <div class="col">
                     <p class="textcenter" ><b style="font-size: 130%"> Device: </b> <span style="white-space: pre-line"> {{device}} </span> </p>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 `,
