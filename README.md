@@ -50,13 +50,13 @@ This means that, if you change a client TypeScript source file, its correspondin
 ### Running
 
 Start the server side by running `npm run server`<br>
-Run the client side by pointing your web browser at http://localhost:8080/.
+Run the client side by pointing your web browser at https://localhost:8080/. Note that you will have to accept the self-signed certificate in order to connect.
 
 ### Debugging<a name="dev-debug"></a>
 
 The server can be debugged by running `npm run server-debug` (instead of `npm run server`) and then connecting a debugger to the Node.js process, for example using Visual Studio Code: Press `Ctrl + Shift + P` (or click `View` -> `Command Palette...`) to get the Command Palette, then type `Debug: Attach to Node process` and hit `Enter`. Select the process called something like `nodejs --inspect-brk out/js/server/server.js`, hit `Enter` again, and you should be good to go.
 
-The client side can be debugged using your web browser's built-in developer tools: Point your browser to http://localhost:8080/ and, at least in Firefox and Chrome, press `F12` (Or select them via the main menu).
+The client side can be debugged using your web browser's built-in developer tools: Point your browser to https://localhost:8080/ and, at least in Firefox and Chrome, press `F12` (Or select them via the main menu).
 
 ### Committing code changes<a name="dev-committing"></a>
 
