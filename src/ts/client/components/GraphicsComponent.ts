@@ -28,6 +28,11 @@ export const GraphicsComponent = Vue.extend({
         });
         //this.$el.appendChild(pixiApp.view);
         //this.$emit('pixi-app', pixiApp);
+        pixiApp.view.style.position = 'absolute';
+        pixiApp.view.style.left = '42%';
+        pixiApp.view.style.top = '50%';
+        pixiApp.view.style.transform = 'translate3d( -42%, -50%, 0)';
+
         const maze:Maze = new Maze(game_width, game_height);
         const mazeGenerator:MazeGenerator = new MazeGenerator(maze);
         mazeGenerator.generateMaze();
