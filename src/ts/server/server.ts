@@ -1,6 +1,7 @@
+import * as fs from 'fs';
 import * as uuid from 'uuid';
 import * as express from 'express';
-import * as http from 'http';
+import * as https from 'https';
 import * as socketIo from 'socket.io';
 import { Protocol } from '../common/protocol/Protocol';
 import { NeverError } from "../common/util/NeverError";
@@ -10,8 +11,11 @@ import { Client } from "./client/Client";
 const LISTEN_PORT = 8080;
 
 const app = express();
-const httpServer = http.createServer(app);
-const io = socketIo(httpServer);
+const httpsServer = https.createServer({
+    key: fs.readFileSync('dev-server.key'),
+    cert: fs.readFileSync('dev-server.crt')
+}, app);
+const io = socketIo(httpsServer);
 
 const roomRegistry = new Map<string, Room>();
 
@@ -58,6 +62,6 @@ io.on('connection', (socket) => {
 
 //
 
-httpServer.listen(LISTEN_PORT, () => {
-    console.log(`HTTP server listening on port ${LISTEN_PORT}`);
+httpsServer.listen(LISTEN_PORT, () => {
+    console.log(`HTTPS server listening on port ${LISTEN_PORT}`);
 });
