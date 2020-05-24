@@ -17,7 +17,8 @@ let app = new Vue({
     el: '#app',
     data: () => ({
         deviceType: undefined as (undefined | Protocol.DeviceType),
-        connected: false
+        connected: false,
+        paused: true
     }),
     components: {
         GraphicsComponent: GraphicsComponent,
@@ -36,6 +37,10 @@ let app = new Vue({
             Protocol.emit(socket, Protocol.READY, deviceType, location.pathname.replace(/^\//, "").split("/")[0]);
 
             this.deviceType = deviceType;
+        },
+        changePaused(){
+            console.log("client before pause change");
+            this.paused = !this.paused;
         }
     }
 });
