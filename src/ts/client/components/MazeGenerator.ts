@@ -18,7 +18,7 @@ class MazeGenerator{
         wall = new Wall(walls_first_x, walls_first_y + this.maze.h, WallDirection.HORIZONTAL, this.maze.w + walls_thickness, true);
         this.maze.walls.push(wall);
         //left wall
-        wall = new Wall(walls_first_x, walls_first_y + walls_distance, WallDirection.VERTICAL, this.maze.h - walls_distance,true);
+        wall = new Wall(walls_first_x, walls_first_y, WallDirection.VERTICAL, this.maze.h,true);
         this.maze.walls.push(wall);
         //right wall
         wall = new Wall(walls_first_x + this.maze.w , walls_first_y, WallDirection.VERTICAL, this.maze.h - walls_distance, true);

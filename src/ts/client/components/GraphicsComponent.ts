@@ -13,9 +13,17 @@ const walls_thickness:number = 5;
 const walls_distance:number = game_width / 13;
 const walls_first_x:number = 5;
 const walls_first_y:number = 5;
+let game_finished = false;
 
 export const GraphicsComponent = Vue.extend({
     data: () => ({}),
+    props: {
+        paused: {
+            type: Boolean,
+            default: true,
+            required: true
+        }
+    },
     template: '<div></div>',
     mounted: function() {
         let pixiApp:PIXI.Application = new PIXI.Application({
@@ -32,26 +40,55 @@ export const GraphicsComponent = Vue.extend({
         pixiApp.view.style.left = '42%';
         pixiApp.view.style.top = '50%';
         pixiApp.view.style.transform = 'translate3d( -42%, -50%, 0)';
-
-        const maze:Maze = new Maze(game_width, game_height);
-        const mazeGenerator:MazeGenerator = new MazeGenerator(maze);
-        mazeGenerator.generateMaze();
         document.body.appendChild(pixiApp.view);
 
-        //Container that contains the walls of the labyrinth
-        const wall_container:PIXI.Container = new PIXI.Container();
-        pixiApp.stage.addChild(wall_container);
-        let walls:PIXI.Graphics = new PIXI.Graphics();
-        maze.draw(walls);
-        wall_container.addChild(walls);
+        const maze:Maze = new Maze(game_width, game_height);
+        let mazeGenerator:MazeGenerator;
 
-        let ball:Ball = new Ball((walls_distance/3),0x000000, walls_distance,(walls_distance/2) + walls_first_x,(walls_distance/2) + walls_first_y);
-        let ball_rendered:PIXI.Graphics = new PIXI.Graphics();
-        ball_rendered.beginFill(ball.color);
-        ball_rendered.drawCircle(ball.x, ball.y, ball.radius);
-        ball_rendered.endFill();
-        pixiApp.stage.addChild(ball_rendered);
+        //Container that contains the walls of the labyrinth
+        let wall_container: PIXI.Container|undefined = undefined;
+        let walls: PIXI.Graphics|undefined = undefined;
+        let ball: Ball;
+        let ball_rendered: PIXI.Graphics;
+
+        function reset() {
+            mazeGenerator = new MazeGenerator(maze);
+            mazeGenerator.generateMaze();
+            wall_container = new PIXI.Container();
+            walls = new PIXI.Graphics();
+            maze.draw(walls);
+            wall_container.addChild(walls);
+            ball = new Ball((walls_distance/3),0x000000, walls_distance, (walls_distance/2) + walls_first_x,(walls_distance/2) + walls_first_y);
+            ball_rendered = new PIXI.Graphics();
+            ball_rendered.beginFill(ball.color);
+            ball_rendered.drawCircle(ball.x, ball.y, ball.radius);
+            ball_rendered.endFill();
+        }
+
+        reset();
+
+        pixiApp.stage.addChild(wall_container!);
+        pixiApp.stage.addChild(ball_rendered!);
+
+        let i = 0;
+        let draw = () => {
+            if(i < 100 && !this.paused) {
+                ball_rendered.x += 5;
+                pixiApp.render();
+                i++;
+            }
+            if(i == 100){
+                game_finished = true;
+            }
+            if(game_finished){}
+            else{
+                requestAnimationFrame(draw);
+            }
+        };
+
+        draw();
     },
+
     methods: {
         onControlData(x: number, y: number) {
             console.log("GraphicsComponent got control data: x=", x, "y=", y);
