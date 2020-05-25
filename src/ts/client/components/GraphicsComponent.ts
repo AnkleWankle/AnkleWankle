@@ -14,6 +14,16 @@ const walls_distance:number = game_width / 13;
 const walls_first_x:number = 5;
 const walls_first_y:number = 5;
 let game_finished = false;
+let ball:Ball;
+let ball_rendered:PIXI.Graphics;
+let pixiApp:PIXI.Application = new PIXI.Application({
+    width: canvas_width,
+    height: canvas_height,
+    antialias: true,
+    transparent: false,
+    backgroundColor: 0xf2f3f4,
+    resolution: 1
+});
 
 export const GraphicsComponent = Vue.extend({
     data: () => ({}),
@@ -26,14 +36,7 @@ export const GraphicsComponent = Vue.extend({
     },
     template: '<div></div>',
     mounted: function() {
-        let pixiApp:PIXI.Application = new PIXI.Application({
-            width: canvas_width,
-            height: canvas_height,
-            antialias: true,
-            transparent: false,
-            backgroundColor: 0xf2f3f4,
-            resolution: 1
-        });
+
         //this.$el.appendChild(pixiApp.view);
         //this.$emit('pixi-app', pixiApp);
         pixiApp.view.style.position = 'absolute';
@@ -46,29 +49,27 @@ export const GraphicsComponent = Vue.extend({
         let mazeGenerator:MazeGenerator;
 
         //Container that contains the walls of the labyrinth
-        let wall_container: PIXI.Container|undefined = undefined;
-        let walls: PIXI.Graphics|undefined = undefined;
+        let wall_container = new PIXI.Container();
+        let walls: PIXI.Graphics;
         let ball: Ball;
-        let ball_rendered: PIXI.Graphics;
+        let ball_rendered = new PIXI.Graphics();
 
-        function reset() {
+        function initialize(){
             mazeGenerator = new MazeGenerator(maze);
             mazeGenerator.generateMaze();
-            wall_container = new PIXI.Container();
             walls = new PIXI.Graphics();
             maze.draw(walls);
             wall_container.addChild(walls);
             ball = new Ball((walls_distance/3),0x000000, walls_distance, (walls_distance/2) + walls_first_x,(walls_distance/2) + walls_first_y);
-            ball_rendered = new PIXI.Graphics();
             ball_rendered.beginFill(ball.color);
+            console.log("initialize" + ball.x + " " + ball.y);
             ball_rendered.drawCircle(ball.x, ball.y, ball.radius);
             ball_rendered.endFill();
         }
 
-        reset();
-
-        pixiApp.stage.addChild(wall_container!);
-        pixiApp.stage.addChild(ball_rendered!);
+        initialize();
+        pixiApp.stage.addChild(wall_container);
+        pixiApp.stage.addChild(ball_rendered);
 
         let i = 0;
         let draw = () => {
@@ -88,11 +89,21 @@ export const GraphicsComponent = Vue.extend({
 
         draw();
     },
-
     methods: {
         onControlData(x: number, y: number) {
             console.log("GraphicsComponent got control data: x=", x, "y=", y);
             // TODO
+        },
+        resetBall: function () {
+            pixiApp.stage.removeChild(ball_rendered);
+            ball.x = walls_distance/2 + walls_first_x;
+            ball.y = walls_distance/2 + walls_first_y;
+            ball_rendered = new PIXI.Graphics();
+            ball_rendered.beginFill(ball.color);
+            ball_rendered.drawCircle(ball.x, ball.y, ball.radius);
+            ball_rendered.endFill();
+            pixiApp.stage.addChild(ball_rendered);
+            game_finished = false;
         }
     }
 });
@@ -102,4 +113,5 @@ export {
     walls_distance,
     walls_first_y,
     walls_first_x,
+
 };

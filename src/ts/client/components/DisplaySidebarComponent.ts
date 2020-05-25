@@ -87,9 +87,9 @@ export const DisplaySidebarComponent = Vue.extend({
             }
         },
         reset: function () {
-          //TODO Emit reset event
             if (this.connected) {
                 this.timer.reset();
+                this.$emit("reset-ball");
             }
         }
     }

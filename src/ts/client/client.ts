@@ -49,6 +49,9 @@ let app = new Vue({
         changePaused() {
             console.log("client before pause change");
             this.paused = !this.paused;
+        },
+        resetBall(){
+            (this.$refs.graphics as any).resetBall();
         }
     }
 });
