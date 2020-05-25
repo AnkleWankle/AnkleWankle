@@ -76,17 +76,21 @@ export const DisplaySidebarComponent = Vue.extend({
     },
     methods: {
         togglePausedStatus: function () {
-            if (this.paused) {
-                this.timer.startTimer();
-            } else {
-                this.timer.stopTimer();
+            if (this.connected) {
+                if (this.paused) {
+                    this.timer.startTimer();
+                } else {
+                    this.timer.stopTimer();
+                }
+                console.log("Displaysidebar before emit");
+                this.$emit("change-paused");
             }
-            console.log("Displaysidebar before emit");
-            this.$emit("change-paused");
         },
         reset: function () {
           //TODO Emit reset event
-            this.timer.reset();
+            if (this.connected) {
+                this.timer.reset();
+            }
         }
     }
 });
