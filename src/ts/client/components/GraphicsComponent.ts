@@ -51,6 +51,12 @@ export const GraphicsComponent = Vue.extend({
         ball_rendered.drawCircle(ball.x, ball.y, ball.radius);
         ball_rendered.endFill();
         pixiApp.stage.addChild(ball_rendered);
+    },
+    methods: {
+        onControlData(x: number, y: number) {
+            console.log("GraphicsComponent got control data: x=", x, "y=", y);
+            // TODO
+        }
     }
 });
 

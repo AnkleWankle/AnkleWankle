@@ -36,10 +36,22 @@ let app = new Vue({
             Protocol.emit(socket, Protocol.READY, deviceType, location.pathname.replace(/^\//, "").split("/")[0]);
 
             this.deviceType = deviceType;
+        },
+        onLocalSensorData(beta: number, gamma: number) {
+            Protocol.emit(socket, Protocol.SENSOR_DATA, beta, gamma);
+        },
+        onRemoteSensorData(beta: number, gamma: number) {
+            let x = 0; // TODO calculate from beta/gamma
+            let y = 0; // TODO calculate from beta/gamma
+            (this.$refs.graphics as InstanceType<typeof GraphicsComponent>).onControlData(x, y); // TODO
         }
     }
 });
 
 Protocol.on(socket, Protocol.ROOM_STATUS, (roomStatus) => {
     app.connected = (roomStatus === "connected");
+});
+
+Protocol.on(socket, Protocol.SENSOR_DATA, (beta, gamma) => {
+    app.onRemoteSensorData(beta, gamma);
 });
