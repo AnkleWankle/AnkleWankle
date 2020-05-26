@@ -36,5 +36,11 @@ export const ControlDeviceComponent = Vue.extend({
         //let container = document.createElement('div')
         //this.$el.appendChild(container);
         //this.$emit('pixi-app', pixiApp);
+        console.log("test if controlDevice only");
+        if((window as any).DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', (event) => {
+                this.$emit('sensor-data', event.beta, event.gamma);
+            });
+        }
     }
 });
