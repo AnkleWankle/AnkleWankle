@@ -12,6 +12,11 @@ class Ball {
       this.x = x;
       this.y = y;
   }
+
+  public move(x: number, y: number){
+        this.x += x;
+        this.y += y;
+    }
 }
 
 export {
