@@ -25,6 +25,13 @@ let pixiApp:PIXI.Application = new PIXI.Application({
     resolution: 1
 });
 
+enum MoveDirection {
+    UP,
+    RIGHT,
+    DOWN,
+    LEFT
+}
+
 export const GraphicsComponent = Vue.extend({
     data: () => ({}),
     props: {
@@ -73,12 +80,59 @@ export const GraphicsComponent = Vue.extend({
 
         let i = 0;
         let draw = () => {
-            if(i < 100 && !this.paused) {
-                ball_rendered.x += 5;
+            if(i < 100000 && !this.paused) {
+                if(i<150){
+                if(!maze.isNeighbourWall(ball.x, ball.y,MoveDirection.RIGHT, 1,ball.radius)){
+                    ball_rendered.x += 1;
+                    ball_rendered.y += 0;
+                    ball.move(+1,+0);
+                }}
+            else if(i<300){
+                if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.LEFT, 1, ball.radius)){
+                    ball_rendered.x -= 1;
+                    ball_rendered.y -= 0;
+                    ball.move(-1,+0);
+                }
+                }
+            else if(i<600){
+                if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.DOWN, 1,ball.radius)){
+                    ball_rendered.x += 0;
+                    ball_rendered.y += 1;
+                    ball.move(+0,+1);
+                }
+                }
+            else if(i<1135){
+                let isEven:boolean = (i%2) == 0;
+                switch(isEven){
+                    case true:
+                        if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.RIGHT, 1,ball.radius)){
+                            ball_rendered.x += 1;
+                            ball_rendered.y += 0;
+                            ball.move(+1,+0);
+                        }
+                        break;
+                    case false:
+                        if(!maze.isNeighbourWall(ball.x,ball.y,MoveDirection.UP, 1,ball.radius)){
+                            ball_rendered.x += 0;
+                            ball_rendered.y -= 1;
+                            ball.move(+0, -1);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                }
+            else{
+                if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.LEFT, 1, ball.radius)){
+                    ball_rendered.x -= 1;
+                    ball_rendered.y += 0;
+                    ball.move(-1, +0);
+                }
+                }
                 pixiApp.render();
                 i++;
             }
-            if(i == 100){
+            if(i == 1500){
                 game_finished = true;
             }
             if(game_finished){}
@@ -113,5 +167,5 @@ export {
     walls_distance,
     walls_first_y,
     walls_first_x,
-
+    MoveDirection
 };
