@@ -8,6 +8,7 @@ class MazeGenerator{
         this.maze = maze;
     }
 
+    //walls need to be sorted by columns and rows
     generateMaze(){
         //surrounding walls
         //top wall
