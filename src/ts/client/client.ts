@@ -42,9 +42,9 @@ let app = new Vue({
             Protocol.emit(socket, Protocol.SENSOR_DATA, beta, gamma);
         },
         onRemoteSensorData(beta: number, gamma: number) {
-            let x = 0; // TODO calculate from beta/gamma
-            let y = 0; // TODO calculate from beta/gamma
-            (this.$refs.graphics as InstanceType<typeof GraphicsComponent>).onControlData(x, y); // TODO
+            // let x = 0; // TODO calculate from beta/gamma
+            // let y = 0; // TODO calculate from beta/gamma
+            (this.$refs.graphics as InstanceType<typeof GraphicsComponent>).onControlData(beta, gamma); // TODO
         },
         changePaused(){
             console.log("client before pause change");

@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 import {Maze} from "./Maze";
 import {MazeGenerator} from "./MazeGenerator";
 import {Ball} from "./Ball";
+import { Gravity } from './Gravity';
 
 //Canvas height & width have to be a multiple of 13 + 20
 const canvas_width:number = 800;
@@ -14,6 +15,10 @@ const walls_distance:number = game_width / 13;
 const walls_first_x:number = 5;
 const walls_first_y:number = 5;
 let game_finished = false;
+export let physics_gravity: Gravity = new Gravity(150, 0.1);
+let ball:Ball;
+let ball_rendered:PIXI.Graphics;
+let timestamp:number;
 
 enum MoveDirection {
     UP,
@@ -55,65 +60,67 @@ export const GraphicsComponent = Vue.extend({
         //Container that contains the walls of the labyrinth
         let wall_container:PIXI.Container;
         let walls:PIXI.Graphics;
-        let ball:Ball;
-        let ball_rendered:PIXI.Graphics;
         reset();
         pixiApp.stage.addChild(wall_container);
         pixiApp.stage.addChild(ball_rendered);
         let i:number = 0;
         let draw = () => {
-            if(i < 100000 && !this.paused) {
-                if(i<150){
-                if(!maze.isNeighbourWall(ball.x, ball.y,MoveDirection.RIGHT, 1,ball.radius)){
-                    ball_rendered.x += 1;
-                    ball_rendered.y += 0;
-                    ball.move(+1,+0);
-                }}
-            else if(i<300){
-                if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.LEFT, 1, ball.radius)){
-                    ball_rendered.x -= 1;
-                    ball_rendered.y -= 0;
-                    ball.move(-1,+0);
-                }
-                }
-            else if(i<600){
-                if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.DOWN, 1,ball.radius)){
-                    ball_rendered.x += 0;
-                    ball_rendered.y += 1;
-                    ball.move(+0,+1);
-                }
-                }
-            else if(i<1135){
-                let isEven:boolean = (i%2) == 0;
-                switch(isEven){
-                    case true:
-                        if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.RIGHT, 1,ball.radius)){
-                            ball_rendered.x += 1;
-                            ball_rendered.y += 0;
-                            ball.move(+1,+0);
-                        }
-                        break;
-                    case false:
-                        if(!maze.isNeighbourWall(ball.x,ball.y,MoveDirection.UP, 1,ball.radius)){
-                            ball_rendered.x += 0;
-                            ball_rendered.y -= 1;
-                            ball.move(+0, -1);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                }
-            else{
-                if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.LEFT, 1, ball.radius)){
-                    ball_rendered.x -= 1;
-                    ball_rendered.y += 0;
-                    ball.move(-1, +0);
-                }
-                }
-                pixiApp.render();
-                i++;
-            }
+            // if(i < 100000 && !this.paused) {
+            //     if(i<150){
+            //     if(!maze.isNeighbourWall(ball.x, ball.y,MoveDirection.RIGHT, 1,ball.radius)){
+            //         ball_rendered.x += 1;
+            //         ball_rendered.y += 0;
+            //         ball.move(+1,+0);
+            //     }}
+            // else if(i<300){
+            //     if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.LEFT, 1, ball.radius)){
+            //         ball_rendered.x -= 1;
+            //         ball_rendered.y -= 0;
+            //         ball.move(-1,+0);
+            //     }
+            //     }
+            // else if(i<600){
+            //     if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.DOWN, 1,ball.radius)){
+            //         ball_rendered.x += 0;
+            //         ball_rendered.y += 1;
+            //         ball.move(+0,+1);
+            //     }
+            //     }
+            // else if(i<1135){
+            //     let isEven:boolean = (i%2) == 0;
+            //     switch(isEven){
+            //         case true:
+            //             if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.RIGHT, 1,ball.radius)){
+            //                 ball_rendered.x += 1;
+            //                 ball_rendered.y += 0;
+            //                 ball.move(+1,+0);
+            //             }
+            //             break;
+            //         case false:
+            //             if(!maze.isNeighbourWall(ball.x,ball.y,MoveDirection.UP, 1,ball.radius)){
+            //                 ball_rendered.x += 0;
+            //                 ball_rendered.y -= 1;
+            //                 ball.move(+0, -1);
+            //             }
+            //             break;
+            //         default:
+            //             break;
+            //     }
+            //     }
+            // else{
+            //     if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.LEFT, 1, ball.radius)){
+            //         ball_rendered.x -= 1;
+            //         ball_rendered.y += 0;
+            //         ball.move(-1, +0);
+            //     }
+            //     }
+            //     pixiApp.render();
+            //     i++;
+            // }
+
+            pixiApp.render();
+
+
             if(i == 1500){
                 game_finished = true;
             }
@@ -131,7 +138,7 @@ export const GraphicsComponent = Vue.extend({
             walls = new PIXI.Graphics();
             maze.draw(walls);
             wall_container.addChild(walls);
-            ball = new Ball((walls_distance/3),0x000000, walls_distance, (walls_distance/2) + walls_first_x,(walls_distance/2) + walls_first_y);
+            ball = new Ball((walls_distance/3),0x000000, walls_distance, (walls_distance/2) + walls_first_x,(walls_distance/2) + walls_first_y, 0, 0);
             ball_rendered = new PIXI.Graphics();
             ball_rendered.beginFill(ball.color);
             ball_rendered.drawCircle(ball.x, ball.y, ball.radius);
@@ -139,8 +146,67 @@ export const GraphicsComponent = Vue.extend({
         }
     },
     methods: {
-        onControlData(x: number, y: number) {
-            console.log("GraphicsComponent got control data: x=", x, "y=", y);
+        onControlData(beta: number, gamma: number) {
+            if (!this.paused)
+            {
+                // console.log("GraphicsComponent got control data: x=", x, "y=", y);
+                // let d = new Date();
+                // let ts =  d.getTime();
+                let delta_time = 0.1;//ts-timestamp;
+                // timestamp = ts;
+
+                let current_v_x = physics_gravity.calcVelocity(gamma, ball.v_x, delta_time);
+                // ball.v_x = current_v_x;
+                let delta_x = physics_gravity.calcDeltaPosition(current_v_x, delta_time);
+
+                // console.log("GraphicsComponent got control data: x=", delta_x);
+
+                ball_rendered.x += delta_x;
+                // ball.move(delta_x,+0);
+
+
+                let current_v_y = physics_gravity.calcVelocity(beta, ball.v_y, delta_time);
+                // ball.v_y = current_v_y;
+                let delta_y = physics_gravity.calcDeltaPosition(current_v_y, delta_time);
+
+                // console.log("GraphicsComponent got control data: y=", delta_y);
+
+                ball_rendered.y += delta_y;
+                ball.move(delta_x,delta_y);
+            }
+
+
+            /***************************** */
+            // let delta_x: number;
+
+            // if (gamma > 10)
+            //     delta_x = 1;
+            // else if (gamma < -10)
+            //     delta_x = -1;
+            // else
+            //     delta_x = 0;
+
+
+            // let delta_y: number;
+
+            // if (beta > 10)
+            //     delta_y = 1;
+            // else if (beta < -10)
+            //     delta_y = -1;
+            // else
+            //     delta_y = 0;
+    
+            // console.log("GraphicsComponent got control data: x=", delta_x);
+
+            // // ball.v_x += delta_x;
+            // ball_rendered.x += delta_x;
+            // ball.move(delta_x,+0);
+
+            // // ball.v_y += delta_x;
+            // ball_rendered.y += delta_y;
+            // ball.move(+0,delta_y);
+            /***************************** */
+            
             // TODO
         }
     }
