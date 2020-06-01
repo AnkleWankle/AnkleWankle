@@ -65,62 +65,35 @@ export const GraphicsComponent = Vue.extend({
         pixiApp.stage.addChild(ball_rendered);
         let i:number = 0;
         let draw = () => {
-            // if(i < 100000 && !this.paused) {
-            //     if(i<150){
-            //     if(!maze.isNeighbourWall(ball.x, ball.y,MoveDirection.RIGHT, 1,ball.radius)){
-            //         ball_rendered.x += 1;
-            //         ball_rendered.y += 0;
-            //         ball.move(+1,+0);
-            //     }}
-            // else if(i<300){
-            //     if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.LEFT, 1, ball.radius)){
-            //         ball_rendered.x -= 1;
-            //         ball_rendered.y -= 0;
-            //         ball.move(-1,+0);
-            //     }
-            //     }
-            // else if(i<600){
-            //     if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.DOWN, 1,ball.radius)){
-            //         ball_rendered.x += 0;
-            //         ball_rendered.y += 1;
-            //         ball.move(+0,+1);
-            //     }
-            //     }
-            // else if(i<1135){
-            //     let isEven:boolean = (i%2) == 0;
-            //     switch(isEven){
-            //         case true:
-            //             if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.RIGHT, 1,ball.radius)){
-            //                 ball_rendered.x += 1;
-            //                 ball_rendered.y += 0;
-            //                 ball.move(+1,+0);
-            //             }
-            //             break;
-            //         case false:
-            //             if(!maze.isNeighbourWall(ball.x,ball.y,MoveDirection.UP, 1,ball.radius)){
-            //                 ball_rendered.x += 0;
-            //                 ball_rendered.y -= 1;
-            //                 ball.move(+0, -1);
-            //             }
-            //             break;
-            //         default:
-            //             break;
-            //     }
-            //     }
-            // else{
-            //     if(!maze.isNeighbourWall(ball.x, ball.y, MoveDirection.LEFT, 1, ball.radius)){
-            //         ball_rendered.x -= 1;
-            //         ball_rendered.y += 0;
-            //         ball.move(-1, +0);
-            //     }
-            //     }
-            //     pixiApp.render();
-            //     i++;
-            // }
-
-            pixiApp.render();
-
-
+            if(i < 100000 && !this.paused) {
+                if(i<150){
+                    moveBall(1, MoveDirection.RIGHT);
+                }
+                else if(i<300){
+                    moveBall(1, MoveDirection.LEFT);
+                }
+                else if(i<600){
+                    moveBall(1, MoveDirection.DOWN);
+                }
+                else if(i<1135){
+                    let isEven:boolean = (i%2) == 0;
+                    switch(isEven){
+                        case true:
+                            moveBall(1, MoveDirection.RIGHT);
+                            break;
+                        case false:
+                            moveBall(1, MoveDirection.UP);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else{
+                    moveBall(1, MoveDirection.LEFT);
+                }
+                pixiApp.render();
+                i++;
+            }
             if(i == 1500){
                 game_finished = true;
             }
@@ -143,6 +116,53 @@ export const GraphicsComponent = Vue.extend({
             ball_rendered.beginFill(ball.color);
             ball_rendered.drawCircle(ball.x, ball.y, ball.radius);
             ball_rendered.endFill();
+        }
+        function moveBall(distance:number, direction:MoveDirection){
+            let successfulMove:boolean = false;
+            switch(direction){
+                case MoveDirection.LEFT:
+                    if(!maze.isNeighbourOrthogonalWall(ball.x,ball.y, direction, distance, ball.radius)){
+                        if(!maze.isNeighbourParallelWall(ball.x, ball.y, direction, distance, ball.radius)){
+                            ball_rendered.x -= distance;
+                            ball.move(-distance, 0);
+                            successfulMove = true;
+                        }
+                    }
+                    break;
+                case MoveDirection.UP:
+                    if(!maze.isNeighbourOrthogonalWall(ball.x,ball.y, direction, distance, ball.radius)){
+                        if(!maze.isNeighbourParallelWall(ball.x, ball.y, direction, distance, ball.radius)){
+                            ball_rendered.y -= distance;
+                            ball.move(0, -distance);
+                            successfulMove = true;
+                        }
+                    }
+                    break;
+                case MoveDirection.RIGHT:
+                    if(!maze.isNeighbourOrthogonalWall(ball.x,ball.y, direction, distance, ball.radius)){
+                        if(!maze.isNeighbourParallelWall(ball.x, ball.y, direction, distance, ball.radius)){
+                            ball_rendered.x += distance;
+                            ball.move(+distance, 0);
+                            successfulMove = true;
+                        }
+                    }
+                    break;
+                case MoveDirection.DOWN:
+                    if(!maze.isNeighbourOrthogonalWall(ball.x,ball.y, direction, distance, ball.radius)){
+                        if(!maze.isNeighbourParallelWall(ball.x, ball.y, direction, distance, ball.radius)){
+                            ball_rendered.y += distance;
+                            ball.move(0, distance);
+                            successfulMove = true;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if(ball.x >= (walls_first_x + game_width)){
+                game_finished = true;
+            }
+            return successfulMove;
         }
     },
     methods: {
