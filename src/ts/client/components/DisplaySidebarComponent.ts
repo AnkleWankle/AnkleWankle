@@ -82,12 +82,14 @@ export const DisplaySidebarComponent = Vue.extend({
                 } else {
                     this.timer.stopTimer();
                 }
-                console.log("Displaysidebar before emit");
+                //console.log("Displaysidebar before emit");
                 this.$emit("change-paused");
             }
         },
         reset: function () {
             if (this.connected) {
+                this.$emit("pause-game");
+                this.timer.stopTimer();
                 this.timer.reset();
                 this.$emit("reset-ball");
             }

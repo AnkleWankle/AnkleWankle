@@ -52,6 +52,9 @@ let app = new Vue({
         },
         resetBall(){
             (this.$refs.graphics as any).resetBall();
+        },
+        pauseGame(){
+            this.paused = true;
         }
     }
 });
