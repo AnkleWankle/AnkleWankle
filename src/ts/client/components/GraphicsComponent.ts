@@ -16,8 +16,10 @@ const walls_first_x:number = 5;
 const walls_first_y:number = 5;
 let game_finished = false;
 let physics_gravity: Gravity = new Gravity(150, 0.1);
-let ball:Ball;
-let ball_rendered:PIXI.Graphics;
+// let ball:Ball;
+// let ball_rendered:PIXI.Graphics;
+let mazeGenerator: MazeGenerator;
+
 let timestamp:number;
 let pixiApp:PIXI.Application = new PIXI.Application({
     width: canvas_width,
@@ -36,7 +38,13 @@ enum MoveDirection {
 }
 
 export const GraphicsComponent = Vue.extend({
-    data: () => ({}),
+    data: () => ({
+        ball: new Ball((walls_distance/3),0x000000, walls_distance, (walls_distance/2) + walls_first_x,(walls_distance/2) + walls_first_y, 0, 0),
+        ball_rendered: new PIXI.Graphics(),
+        maze: new Maze(game_width, game_height),
+        walls: new PIXI.Graphics(),
+        wall_container: new PIXI.Container()
+    }),
     props: {
         paused: {
             type: Boolean,
@@ -55,114 +63,55 @@ export const GraphicsComponent = Vue.extend({
         pixiApp.view.style.transform = 'translate3d( -42%, -50%, 0)';
         document.body.appendChild(pixiApp.view);
 
-        const maze:Maze = new Maze(game_width, game_height);
-        let mazeGenerator:MazeGenerator;
+        // const maze:Maze = new Maze(game_width, game_height);
+        // let mazeGenerator:MazeGenerator;
 
         //Container that contains the walls of the labyrinth
-        let wall_container = new PIXI.Container();
-        let walls: PIXI.Graphics;
-        let ball: Ball;
-        let ball_rendered = new PIXI.Graphics();
+        // let wall_container = new PIXI.Container();
+        // let walls: PIXI.Graphics;
+        // let ball: Ball;
+        // let ball_rendered = new PIXI.Graphics();
 
-        function initialize() {
-            mazeGenerator = new MazeGenerator(maze);
-            mazeGenerator.generateMaze();
-            walls = new PIXI.Graphics();
-            maze.draw(walls);
-            wall_container.addChild(walls);
-            ball = new Ball((walls_distance/3),0x000000, walls_distance, (walls_distance/2) + walls_first_x,(walls_distance/2) + walls_first_y, 0, 0);
-            ball_rendered.beginFill(ball.color);
-            console.log("initialize" + ball.x + " " + ball.y);
-            ball_rendered.drawCircle(ball.x, ball.y, ball.radius);
-            ball_rendered.endFill();
-        }
 
-        function moveBall(distance:number, direction:MoveDirection) {
-            let successfulMove:boolean = false;
-            switch(direction){
-                case MoveDirection.LEFT:
-                    if(!maze.isNeighbourOrthogonalWall(ball.x,ball.y, direction, distance, ball.radius)){
-                        if(!maze.isNeighbourParallelWall(ball.x, ball.y, direction, distance, ball.radius)){
-                            ball_rendered.x -= distance;
-                            ball.move(-distance, 0);
-                            successfulMove = true;
-                        }
-                    }
-                    break;
-                case MoveDirection.UP:
-                    if(!maze.isNeighbourOrthogonalWall(ball.x,ball.y, direction, distance, ball.radius)){
-                        if(!maze.isNeighbourParallelWall(ball.x, ball.y, direction, distance, ball.radius)){
-                            ball_rendered.y -= distance;
-                            ball.move(0, -distance);
-                            successfulMove = true;
-                        }
-                    }
-                    break;
-                case MoveDirection.RIGHT:
-                    if(!maze.isNeighbourOrthogonalWall(ball.x,ball.y, direction, distance, ball.radius)){
-                        if(!maze.isNeighbourParallelWall(ball.x, ball.y, direction, distance, ball.radius)){
-                            ball_rendered.x += distance;
-                            ball.move(+distance, 0);
-                            successfulMove = true;
-                        }
-                    }
-                    break;
-                case MoveDirection.DOWN:
-                    if(!maze.isNeighbourOrthogonalWall(ball.x,ball.y, direction, distance, ball.radius)){
-                        if(!maze.isNeighbourParallelWall(ball.x, ball.y, direction, distance, ball.radius)){
-                            ball_rendered.y += distance;
-                            ball.move(0, distance);
-                            successfulMove = true;
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-            if(ball.x >= (walls_first_x + game_width)){
-                game_finished = true;
-            }
-            return successfulMove;
-        }
+        this.initialize();
+        pixiApp.stage.addChild(this.wall_container);
+        pixiApp.stage.addChild(this.ball_rendered);
 
-        initialize();
-        pixiApp.stage.addChild(wall_container);
-        pixiApp.stage.addChild(ball_rendered);
-
-        let i = 0;
+        // let i = 0;
         let draw = () => {
-            if(i < 100000 && !this.paused) {
-                if(i<150){
-                    moveBall(1, MoveDirection.RIGHT);
-                }
-                else if(i<300){
-                    moveBall(1, MoveDirection.LEFT);
-                }
-                else if(i<600){
-                    moveBall(1, MoveDirection.DOWN);
-                }
-                else if(i<1135){
-                    let isEven:boolean = (i%2) == 0;
-                    switch(isEven){
-                        case true:
-                            moveBall(1, MoveDirection.RIGHT);
-                            break;
-                        case false:
-                            moveBall(1, MoveDirection.UP);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                else{
-                    moveBall(1, MoveDirection.LEFT);
-                }
-                pixiApp.render();
-                i++;
-            }
-            if(i == 1500){
-                game_finished = true;
-            }
+            // if(i < 100000 && !this.paused) {
+            //     if(i<150){
+            //         this.moveBall(1, MoveDirection.RIGHT);
+            //     }
+            //     else if(i<300){
+            //         this.moveBall(1, MoveDirection.LEFT);
+            //     }
+            //     else if(i<600){
+            //         this.moveBall(1, MoveDirection.DOWN);
+            //     }
+            //     else if(i<1135){
+            //         let isEven:boolean = (i%2) == 0;
+            //         switch(isEven){
+            //             case true:
+            //                 this.moveBall(1, MoveDirection.RIGHT);
+            //                 break;
+            //             case false:
+            //                 this.moveBall(1, MoveDirection.UP);
+            //                 break;
+            //             default:
+            //                 break;
+            //         }
+            //     }
+            //     else{
+            //         this.moveBall(1, MoveDirection.LEFT);
+            //     }
+            //     pixiApp.render();
+            //     i++;
+            // }
+            // if(i == 1500){
+            //     game_finished = true;
+            // }
+            pixiApp.render();
             if(game_finished){}
             else{
                 requestAnimationFrame(draw);
@@ -181,24 +130,33 @@ export const GraphicsComponent = Vue.extend({
                 let delta_time = 0.1;//ts-timestamp;
                 // timestamp = ts;
 
-                let current_v_x = physics_gravity.calcVelocity(gamma, ball.v_x, delta_time);
+                let current_v_x = physics_gravity.calcVelocity(gamma, this.ball.v_x, delta_time);
                 // ball.v_x = current_v_x;
                 let delta_x = physics_gravity.calcDeltaPosition(current_v_x, delta_time);
 
                 // console.log("GraphicsComponent got control data: x=", delta_x);
 
-                ball_rendered.x += delta_x;
+                // this.ball_rendered.x += delta_x;
                 // ball.move(delta_x,+0);
 
+                if (delta_x > 0)
+                    this.moveBall(1, MoveDirection.RIGHT);//this.moveBall(Math.abs(delta_x), MoveDirection.RIGHT);
+                else
+                    this.moveBall(1, MoveDirection.LEFT);//this.moveBall(Math.abs(delta_x), MoveDirection.LEFT);
 
-                let current_v_y = physics_gravity.calcVelocity(beta, ball.v_y, delta_time);
+                let current_v_y = physics_gravity.calcVelocity(beta, this.ball.v_y, delta_time);
                 // ball.v_y = current_v_y;
                 let delta_y = physics_gravity.calcDeltaPosition(current_v_y, delta_time);
 
                 // console.log("GraphicsComponent got control data: y=", delta_y);
 
-                ball_rendered.y += delta_y;
-                ball.move(delta_x,delta_y);
+                // this.ball_rendered.y += delta_y;
+                // this.ball.move(delta_x,delta_y);
+
+                if (delta_y > 0)
+                    this.moveBall(1, MoveDirection.DOWN);//this.moveBall(Math.abs(delta_y), MoveDirection.DOWN);
+                else
+                    this.moveBall(1, MoveDirection.UP);//this.moveBall(Math.abs(delta_y), MoveDirection.UP);
             }
 
 
@@ -236,15 +194,74 @@ export const GraphicsComponent = Vue.extend({
             // TODO
         },
         resetBall: function () {
-            pixiApp.stage.removeChild(ball_rendered);
-            ball.x = walls_distance/2 + walls_first_x;
-            ball.y = walls_distance/2 + walls_first_y;
-            ball_rendered = new PIXI.Graphics();
-            ball_rendered.beginFill(ball.color);
-            ball_rendered.drawCircle(ball.x, ball.y, ball.radius);
-            ball_rendered.endFill();
-            pixiApp.stage.addChild(ball_rendered);
+            pixiApp.stage.removeChild(this.ball_rendered);
+            this.ball.x = walls_distance/2 + walls_first_x;
+            this.ball.y = walls_distance/2 + walls_first_y;
+            this.ball_rendered = new PIXI.Graphics();
+            this.ball_rendered.beginFill(this.ball.color);
+            this.ball_rendered.drawCircle(this.ball.x, this.ball.y, this.ball.radius);
+            this.ball_rendered.endFill();
+            pixiApp.stage.addChild(this.ball_rendered);
             game_finished = false;
+        },
+        initialize() {
+            mazeGenerator = new MazeGenerator(this.maze);
+            mazeGenerator.generateMaze();
+            // this.walls = new PIXI.Graphics();
+            this.maze.draw(this.walls);
+            this.wall_container.addChild(this.walls);
+            // ball = new Ball((walls_distance/3),0x000000, walls_distance, (walls_distance/2) + walls_first_x,(walls_distance/2) + walls_first_y, 0, 0);
+            this.ball_rendered.beginFill(this.ball.color);
+            console.log("initialize" + this.ball.x + " " + this.ball.y);
+            this.ball_rendered.drawCircle(this.ball.x, this.ball.y, this.ball.radius);
+            this.ball_rendered.endFill();
+        },
+        moveBall(distance:number, direction:MoveDirection) {
+            let successfulMove:boolean = false;
+            switch(direction){
+                case MoveDirection.LEFT:
+                    if(!this.maze.isNeighbourOrthogonalWall(this.ball.x,this.ball.y, direction, distance, this.ball.radius)){
+                        if(!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, distance, this.ball.radius)){
+                            this.ball_rendered.x -= distance;
+                            this.ball.move(-distance, 0);
+                            successfulMove = true;
+                        }
+                    }
+                    break;
+                case MoveDirection.UP:
+                    if(!this.maze.isNeighbourOrthogonalWall(this.ball.x,this.ball.y, direction, distance, this.ball.radius)){
+                        if(!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, distance, this.ball.radius)){
+                            this.ball_rendered.y -= distance;
+                            this.ball.move(0, -distance);
+                            successfulMove = true;
+                        }
+                    }
+                    break;
+                case MoveDirection.RIGHT:
+                    if(!this.maze.isNeighbourOrthogonalWall(this.ball.x,this.ball.y, direction, distance, this.ball.radius)){
+                        if(!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, distance, this.ball.radius)){
+                            this.ball_rendered.x += distance;
+                            this.ball.move(+distance, 0);
+                            successfulMove = true;
+                        }
+                    }
+                    break;
+                case MoveDirection.DOWN:
+                    if(!this.maze.isNeighbourOrthogonalWall(this.ball.x,this.ball.y, direction, distance, this.ball.radius)){
+                        if(!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, distance, this.ball.radius)){
+                            this.ball_rendered.y += distance;
+                            this.ball.move(0, distance);
+                            successfulMove = true;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if(this.ball.x >= (walls_first_x + game_width)){
+                game_finished = true;
+            }
+            return successfulMove;
         }
     }
 });
