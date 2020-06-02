@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import {Timer} from "../Timer";
 
-
 export const DisplaySidebarComponent = Vue.extend({
     data: () => ({
         loc: location,
@@ -63,30 +62,45 @@ export const DisplaySidebarComponent = Vue.extend({
                     <p v-if="!connected" style="font-size: 130%" class="textcenter"> <b>Status:</b> <span class="badge badge-pill badge-danger"> not connected </span> </p>
                 </div>
             </div>
-            <!--<div class="row">
+            <div class="row">
                 <div class="col">
-                    <p class="textcenter" ><b style="font-size: 130%"> Device: </b> <span style="white-space: pre-line"> {{device}} </span> </p>
+                    <p class="textcenter" > <canvas id="canvas"> </canvas> </p>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
 `,
     mounted: function() {
+        var QRCode = require('qrcode')
+        var canvas = document.getElementById('canvas')
 
+        QRCode.toCanvas(canvas, location.href, {scale:3, margin: 0, color: {light: '#909090'}}, function (error:any) {
+            if (error) {
+                console.error(error)
+            } else {
+                console.log('success!');
+            }
+        })
     },
     methods: {
         togglePausedStatus: function () {
-            if (this.paused) {
-                this.timer.startTimer();
-            } else {
-                this.timer.stopTimer();
+            if (this.connected) {
+                if (this.paused) {
+                    this.timer.startTimer();
+                } else {
+                    this.timer.stopTimer();
+                }
+                //console.log("Displaysidebar before emit");
+                this.$emit("change-paused");
             }
-            console.log("Displaysidebar before emit");
-            this.$emit("change-paused");
         },
         reset: function () {
-          //TODO Emit reset event
-            this.timer.reset();
+            if (this.connected) {
+                this.$emit("pause-game");
+                this.timer.stopTimer();
+                this.timer.reset();
+                this.$emit("reset-ball");
+            }
         }
     }
 });

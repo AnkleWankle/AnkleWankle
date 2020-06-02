@@ -5,7 +5,7 @@ import { GraphicsComponent } from './components/GraphicsComponent';
 import { Protocol } from '../common/protocol/Protocol';
 import { ControlDeviceComponent } from './components/ControlDeviceComponent';
 import { DeviceDecisionComponent } from './components/DeviceDecisionComponent';
-import {DisplaySidebarComponent} from "./components/DisplaySidebarComponent";
+import { DisplaySidebarComponent } from "./components/DisplaySidebarComponent";
 
 // connect via socket.io
 let socket = io();
@@ -42,13 +42,17 @@ let app = new Vue({
             Protocol.emit(socket, Protocol.SENSOR_DATA, beta, gamma);
         },
         onRemoteSensorData(beta: number, gamma: number) {
-            // let x = 0; // TODO calculate from beta/gamma
-            // let y = 0; // TODO calculate from beta/gamma
-            (this.$refs.graphics as InstanceType<typeof GraphicsComponent>).onControlData(beta, gamma); // TODO
+            (this.$refs.graphics as InstanceType<typeof GraphicsComponent>).onControlData(beta, gamma);
         },
-        changePaused(){
+        changePaused() {
             console.log("client before pause change");
             this.paused = !this.paused;
+        },
+        resetBall(){
+            (this.$refs.graphics as any).resetBall();
+        },
+        pauseGame(){
+            this.paused = true;
         }
     }
 });
