@@ -4,7 +4,6 @@ import {Timer} from "../Timer";
 
 export const DisplaySidebarComponent = Vue.extend({
     data: () => ({
-        paused: true,
         loc: location,
         timer: new Timer(),
         //device: "Some device" // wird gestrichen
@@ -13,6 +12,11 @@ export const DisplaySidebarComponent = Vue.extend({
         connected: {
             type: Boolean,
             default: false,
+            required: true
+        },
+        paused: {
+            type: Boolean,
+            default: true,
             required: true
         }
     },
@@ -72,17 +76,23 @@ export const DisplaySidebarComponent = Vue.extend({
     },
     methods: {
         togglePausedStatus: function () {
-            this.paused = !this.paused;
-            if (!this.paused) {
-                this.timer.startTimer();
-            } else {
-                this.timer.stopTimer();
+            if (this.connected) {
+                if (this.paused) {
+                    this.timer.startTimer();
+                } else {
+                    this.timer.stopTimer();
+                }
+                //console.log("Displaysidebar before emit");
+                this.$emit("change-paused");
             }
-            //TODO emit pause event
         },
         reset: function () {
-          //TODO Emit reset event
-            this.timer.reset();
+            if (this.connected) {
+                this.$emit("pause-game");
+                this.timer.stopTimer();
+                this.timer.reset();
+                this.$emit("reset-ball");
+            }
         }
     }
 });

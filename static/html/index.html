@@ -9,8 +9,8 @@
     <body>
         <div id="app" class="align-middle">
             <device-decision-component v-if="deviceType === undefined" v-on:device-type-set="onDeviceTypeSet"></device-decision-component>
-            <graphics-component v-if="deviceType === 'display'" v-on:pixi-app="pixiApp" ref="graphics"></graphics-component>
-            <display-sidebar-component v-if="deviceType === 'display'" :connected="connected"></display-sidebar-component>
+            <graphics-component v-if="deviceType === 'display'" v-on:pixi-app="pixiApp" :paused="paused" ref="graphics"></graphics-component>
+            <display-sidebar-component v-if="deviceType === 'display'" :connected="connected" :paused="paused" v-on:change-paused="changePaused" v-on:reset-ball="resetBall" v-on:pause-game="pauseGame"></display-sidebar-component>
             <control-device-component v-if="deviceType === 'control'" :connected="connected" v-on:sensor-data="onLocalSensorData"></control-device-component>
         </div>
 

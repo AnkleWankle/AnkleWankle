@@ -1,11 +1,11 @@
 import Timeout = NodeJS.Timeout;
 
 export class Timer {
-    private secondsCounter: number;
+    counter: number;
     minSec: string;
     private timerId: number;
     constructor() {
-        this.secondsCounter = 0;
+        this.counter = 0;
         this.timerId = 0;
         this.minSec = this.toMMSS();
     }
@@ -13,13 +13,13 @@ export class Timer {
     startTimer() {
         //console.log("start");
         this.timerId = window.setInterval(() => {
-            this.secondsCounter = this.secondsCounter + 1;
+            this.counter = this.counter + 1;
             this.minSec = this.toMMSS();
-        }, 1000);
+        }, 10);
     }
 
     reset() {
-        this.secondsCounter = 0;
+        this.counter = 0;
         this.minSec = this.toMMSS();
     }
 
@@ -29,8 +29,8 @@ export class Timer {
     }
 
     toMMSS() {
-        let minutes = Math.floor(this.secondsCounter/60);
-        let seconds = Math.floor(this.secondsCounter - minutes*60);
+        let minutes = Math.floor(this.counter/6000);
+        let seconds = Math.floor(this.counter/100 - minutes*60);
 
         let minString = (minutes < 10) ? "0" + minutes : "" + minutes;
         let secString = (seconds < 10) ? "0" + seconds : "" + seconds;

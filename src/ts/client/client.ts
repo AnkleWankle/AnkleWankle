@@ -17,7 +17,8 @@ let app = new Vue({
     el: '#app',
     data: () => ({
         deviceType: undefined as (undefined | Protocol.DeviceType),
-        connected: false
+        connected: false,
+        paused: true
     }),
     components: {
         GraphicsComponent: GraphicsComponent,
@@ -44,6 +45,16 @@ let app = new Vue({
             let x = 0; // TODO calculate from beta/gamma
             let y = 0; // TODO calculate from beta/gamma
             (this.$refs.graphics as InstanceType<typeof GraphicsComponent>).onControlData(x, y); // TODO
+        },
+        changePaused() {
+            console.log("client before pause change");
+            this.paused = !this.paused;
+        },
+        resetBall(){
+            (this.$refs.graphics as any).resetBall();
+        },
+        pauseGame(){
+            this.paused = true;
         }
     }
 });
