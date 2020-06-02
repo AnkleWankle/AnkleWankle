@@ -14,8 +14,8 @@ const walls_distance:number = game_width / 13;
 const walls_first_x:number = 5;
 const walls_first_y:number = 5;
 let game_finished = false;
-let ball:Ball;
-let ball_rendered:PIXI.Graphics;
+let ball: Ball;
+let ball_rendered = new PIXI.Graphics();
 let pixiApp:PIXI.Application = new PIXI.Application({
     width: canvas_width,
     height: canvas_height,
@@ -58,8 +58,6 @@ export const GraphicsComponent = Vue.extend({
         //Container that contains the walls of the labyrinth
         let wall_container = new PIXI.Container();
         let walls: PIXI.Graphics;
-        let ball: Ball;
-        let ball_rendered = new PIXI.Graphics();
 
         function initialize() {
             mazeGenerator = new MazeGenerator(maze);
