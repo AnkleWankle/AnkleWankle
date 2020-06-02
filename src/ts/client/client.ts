@@ -44,7 +44,7 @@ let app = new Vue({
         onRemoteSensorData(beta: number, gamma: number) {
             let x = 0; // TODO calculate from beta/gamma
             let y = 0; // TODO calculate from beta/gamma
-	    (this.$refs.graphics as InstanceType<typeof GraphicsComponent>).onControlData(x, y); // TODO
+            (this.$refs.graphics as InstanceType<typeof GraphicsComponent>).onControlData(x, y); // TODO
         },
         changePaused() {
             console.log("client before pause change");
