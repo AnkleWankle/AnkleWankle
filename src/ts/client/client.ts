@@ -18,7 +18,8 @@ let app = new Vue({
     data: () => ({
         deviceType: undefined as (undefined | Protocol.DeviceType),
         connected: false,
-        paused: true
+        paused: true,
+        gameFinished: false
     }),
     components: {
         GraphicsComponent: GraphicsComponent,
@@ -45,7 +46,6 @@ let app = new Vue({
             (this.$refs.graphics as InstanceType<typeof GraphicsComponent>).onControlData(beta, gamma);
         },
         changePaused() {
-            console.log("client before pause change");
             this.paused = !this.paused;
         },
         resetBall(){
@@ -54,7 +54,14 @@ let app = new Vue({
         pauseGame(){
             this.paused = true;
         },
-        gameFinished(){
+        changeGameFinishedToFalse(){
+          this.gameFinished = false;
+        },
+        changeGameFinishedToTrue(){
+            this.gameFinished = true;
+        },
+        gameHasFinished(){
+            this.changeGameFinishedToTrue();
             this.paused = true;
             (this.$refs.sidebar as any).stopClock();
         }

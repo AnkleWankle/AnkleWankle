@@ -17,6 +17,11 @@ export const DisplaySidebarComponent = Vue.extend({
             type: Boolean,
             default: true,
             required: true
+        },
+        gameFinished: {
+            type: Boolean,
+            default: false,
+            required: true
         }
     },
     template: `
@@ -85,13 +90,13 @@ export const DisplaySidebarComponent = Vue.extend({
     methods: {
         togglePausedStatus: function () {
             if (this.connected) {
-                if (this.paused) {
+                if (this.paused && !this.gameFinished){
                     this.startClock();
-                } else {
+                    this.$emit("change-paused");
+                } else if (!this.paused) {
                     this.stopClock();
+                    this.$emit("change-paused");
                 }
-                //console.log("Displaysidebar before emit");
-                this.$emit("change-paused");
             }
         },
         reset: function () {

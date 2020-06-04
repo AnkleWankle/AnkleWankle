@@ -14,7 +14,6 @@ const walls_thickness:number = 5;
 const walls_distance:number = game_width / 13;
 const walls_first_x:number = 5;
 const walls_first_y:number = 5;
-let game_finished = false;
 let physics_gravity: Gravity = new Gravity(450, 0.1);
 // let ball:Ball;
 // let ball_rendered:PIXI.Graphics;
@@ -49,6 +48,11 @@ export const GraphicsComponent = Vue.extend({
         paused: {
             type: Boolean,
             default: true,
+            required: true
+        },
+        gameFinished: {
+            type: Boolean,
+            default: false,
             required: true
         }
     },
@@ -112,7 +116,7 @@ export const GraphicsComponent = Vue.extend({
             //     game_finished = true;
             // }
             pixiApp.render();
-            if(game_finished){}
+            if(this.gameFinished){}
             else{
                 requestAnimationFrame(draw);
             }
@@ -122,7 +126,7 @@ export const GraphicsComponent = Vue.extend({
     },
     methods: {
         onControlData(beta: number, gamma: number) {
-            if ((!this.paused) && (game_finished == false))
+            if ((!this.paused) && (this.gameFinished == false))
             {
                 // console.log("GraphicsComponent got control data: x=", x, "y=", y);
                 // let d = new Date();
@@ -202,7 +206,7 @@ export const GraphicsComponent = Vue.extend({
             this.ball_rendered.drawCircle(this.ball.x, this.ball.y, this.ball.radius);
             this.ball_rendered.endFill();
             pixiApp.stage.addChild(this.ball_rendered);
-            game_finished = false;
+            this.$emit("change-game-finished-to-false");
         },
         initialize() {
             mazeGenerator = new MazeGenerator(this.maze);
@@ -280,10 +284,10 @@ export const GraphicsComponent = Vue.extend({
                         break;
                 }
                 if (this.ball.x >= (walls_first_x + game_width)) {
-                    game_finished = true;
-                    this.$emit("game-finished");
+                    this.$emit("game-has-finished");
                 }
-                if(!successfulMove){
+                console.log("gameFinished: " + this.gameFinished);
+                if(!successfulMove || this.gameFinished){
                     return successfulMove;
                 }
             }
