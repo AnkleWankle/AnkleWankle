@@ -217,51 +217,47 @@ export const GraphicsComponent = Vue.extend({
             this.ball_rendered.endFill();
         },
         moveBall(distance:number, direction:MoveDirection) {
-            let successfulMove:boolean = false;
-            switch(direction){
-                case MoveDirection.LEFT:
-                    if(!this.maze.isNeighbourOrthogonalWall(this.ball.x,this.ball.y, direction, distance, this.ball.radius)){
-                        if(!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, distance, this.ball.radius)){
-                            this.ball_rendered.x -= distance;
-                            this.ball.move(-distance, 0);
-                            successfulMove = true;
+            for(let i:number = 0; i < distance; i++) {
+                switch (direction) {
+                    case MoveDirection.LEFT:
+                        if (!this.maze.isNeighbourOrthogonalWall(this.ball.x, this.ball.y, direction, 1, this.ball.radius)) {
+                            if (!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, 1, this.ball.radius)) {
+                                this.ball_rendered.x -= 1;
+                                this.ball.move(-1, 0);
+                            }
                         }
-                    }
-                    break;
-                case MoveDirection.UP:
-                    if(!this.maze.isNeighbourOrthogonalWall(this.ball.x,this.ball.y, direction, distance, this.ball.radius)){
-                        if(!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, distance, this.ball.radius)){
-                            this.ball_rendered.y -= distance;
-                            this.ball.move(0, -distance);
-                            successfulMove = true;
+                        break;
+                    case MoveDirection.UP:
+                        if (!this.maze.isNeighbourOrthogonalWall(this.ball.x, this.ball.y, direction, 1, this.ball.radius)) {
+                            if (!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, 1, this.ball.radius)) {
+                                this.ball_rendered.y -= 1;
+                                this.ball.move(0, -1);
+                            }
                         }
-                    }
-                    break;
-                case MoveDirection.RIGHT:
-                    if(!this.maze.isNeighbourOrthogonalWall(this.ball.x,this.ball.y, direction, distance, this.ball.radius)){
-                        if(!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, distance, this.ball.radius)){
-                            this.ball_rendered.x += distance;
-                            this.ball.move(+distance, 0);
-                            successfulMove = true;
+                        break;
+                    case MoveDirection.RIGHT:
+                        if (!this.maze.isNeighbourOrthogonalWall(this.ball.x, this.ball.y, direction, 1, this.ball.radius)) {
+                            if (!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, 1, this.ball.radius)) {
+                                this.ball_rendered.x += 1;
+                                this.ball.move(+1, 0);
+                            }
                         }
-                    }
-                    break;
-                case MoveDirection.DOWN:
-                    if(!this.maze.isNeighbourOrthogonalWall(this.ball.x,this.ball.y, direction, distance, this.ball.radius)){
-                        if(!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, distance, this.ball.radius)){
-                            this.ball_rendered.y += distance;
-                            this.ball.move(0, distance);
-                            successfulMove = true;
+                        break;
+                    case MoveDirection.DOWN:
+                        if (!this.maze.isNeighbourOrthogonalWall(this.ball.x, this.ball.y, direction, 1, this.ball.radius)) {
+                            if (!this.maze.isNeighbourParallelWall(this.ball.x, this.ball.y, direction, 1, this.ball.radius)) {
+                                this.ball_rendered.y += 1;
+                                this.ball.move(0, 1);
+                            }
                         }
-                    }
-                    break;
-                default:
-                    break;
+                        break;
+                    default:
+                        break;
+                }
+                if (this.ball.x >= (walls_first_x + game_width)) {
+                    game_finished = true;
+                }
             }
-            if(this.ball.x >= (walls_first_x + game_width)){
-                game_finished = true;
-            }
-            return successfulMove;
         }
     }
 });
