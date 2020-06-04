@@ -86,9 +86,9 @@ export const DisplaySidebarComponent = Vue.extend({
         togglePausedStatus: function () {
             if (this.connected) {
                 if (this.paused) {
-                    this.timer.startTimer();
+                    this.startClock();
                 } else {
-                    this.timer.stopTimer();
+                    this.stopClock();
                 }
                 //console.log("Displaysidebar before emit");
                 this.$emit("change-paused");
@@ -97,10 +97,19 @@ export const DisplaySidebarComponent = Vue.extend({
         reset: function () {
             if (this.connected) {
                 this.$emit("pause-game");
-                this.timer.stopTimer();
-                this.timer.reset();
+                this.stopClock();
+                this.resetClock();
                 this.$emit("reset-ball");
             }
+        },
+        stopClock: function () {
+            this.timer.stopTimer();
+        },
+        startClock: function () {
+            this.timer.startTimer();
+        },
+        resetClock: function () {
+            this.timer.reset();
         }
     }
 });

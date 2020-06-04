@@ -56,6 +56,7 @@ let app = new Vue({
         },
         gameFinished(){
             this.paused = true;
+            (this.$refs.sidebar as any).stopClock();
         }
     }
 });
