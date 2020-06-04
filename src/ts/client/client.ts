@@ -53,6 +53,9 @@ let app = new Vue({
         },
         pauseGame(){
             this.paused = true;
+        },
+        gameFinished(){
+            this.paused = true;
         }
     }
 });

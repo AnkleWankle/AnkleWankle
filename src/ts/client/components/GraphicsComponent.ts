@@ -217,6 +217,7 @@ export const GraphicsComponent = Vue.extend({
             this.ball_rendered.endFill();
         },
         moveBall(distance:number, direction:MoveDirection) {
+            let successfulMove:boolean = true;
             for(let i:number = 0; i < distance; i++) {
                 switch (direction) {
                     case MoveDirection.LEFT:
@@ -225,6 +226,12 @@ export const GraphicsComponent = Vue.extend({
                                 this.ball_rendered.x -= 1;
                                 this.ball.move(-1, 0);
                             }
+                            else{
+                                successfulMove = false;
+                            }
+                        }
+                        else{
+                            successfulMove = false;
                         }
                         break;
                     case MoveDirection.UP:
@@ -233,6 +240,12 @@ export const GraphicsComponent = Vue.extend({
                                 this.ball_rendered.y -= 1;
                                 this.ball.move(0, -1);
                             }
+                            else{
+                                successfulMove = false;
+                            }
+                        }
+                        else{
+                            successfulMove = false;
                         }
                         break;
                     case MoveDirection.RIGHT:
@@ -241,6 +254,12 @@ export const GraphicsComponent = Vue.extend({
                                 this.ball_rendered.x += 1;
                                 this.ball.move(+1, 0);
                             }
+                            else{
+                                successfulMove = false;
+                            }
+                        }
+                        else{
+                            successfulMove = false;
                         }
                         break;
                     case MoveDirection.DOWN:
@@ -249,6 +268,12 @@ export const GraphicsComponent = Vue.extend({
                                 this.ball_rendered.y += 1;
                                 this.ball.move(0, 1);
                             }
+                            else{
+                                successfulMove = false;
+                            }
+                        }
+                        else{
+                            successfulMove = false;
                         }
                         break;
                     default:
@@ -256,8 +281,13 @@ export const GraphicsComponent = Vue.extend({
                 }
                 if (this.ball.x >= (walls_first_x + game_width)) {
                     game_finished = true;
+                    this.$emit("game-finished");
+                }
+                if(!successfulMove){
+                    return successfulMove;
                 }
             }
+            return successfulMove;
         }
     }
 });
