@@ -15,7 +15,7 @@ const walls_distance:number = game_width / 13;
 const walls_first_x:number = 5;
 const walls_first_y:number = 5;
 let game_finished = false;
-let physics_gravity: Gravity = new Gravity(150, 0.1);
+let physics_gravity: Gravity = new Gravity(450, 0.1);
 // let ball:Ball;
 // let ball_rendered:PIXI.Graphics;
 let mazeGenerator: MazeGenerator;
@@ -122,7 +122,7 @@ export const GraphicsComponent = Vue.extend({
     },
     methods: {
         onControlData(beta: number, gamma: number) {
-            if (!this.paused)
+            if ((!this.paused) && (game_finished == false))
             {
                 // console.log("GraphicsComponent got control data: x=", x, "y=", y);
                 // let d = new Date();
@@ -132,7 +132,7 @@ export const GraphicsComponent = Vue.extend({
 
                 let current_v_x = physics_gravity.calcVelocity(gamma, this.ball.v_x, delta_time);
                 // ball.v_x = current_v_x;
-                let delta_x = physics_gravity.calcDeltaPosition(current_v_x, delta_time);
+                let delta_x = Math.round(physics_gravity.calcDeltaPosition(current_v_x, delta_time));
 
                 // console.log("GraphicsComponent got control data: x=", delta_x);
 
@@ -140,13 +140,13 @@ export const GraphicsComponent = Vue.extend({
                 // ball.move(delta_x,+0);
 
                 if (delta_x > 0)
-                    this.moveBall(1, MoveDirection.RIGHT);//this.moveBall(Math.abs(delta_x), MoveDirection.RIGHT);
+                    this.moveBall(Math.abs(delta_x), MoveDirection.RIGHT);
                 else
-                    this.moveBall(1, MoveDirection.LEFT);//this.moveBall(Math.abs(delta_x), MoveDirection.LEFT);
+                    this.moveBall(Math.abs(delta_x), MoveDirection.LEFT);
 
                 let current_v_y = physics_gravity.calcVelocity(beta, this.ball.v_y, delta_time);
                 // ball.v_y = current_v_y;
-                let delta_y = physics_gravity.calcDeltaPosition(current_v_y, delta_time);
+                let delta_y = Math.round(physics_gravity.calcDeltaPosition(current_v_y, delta_time));
 
                 // console.log("GraphicsComponent got control data: y=", delta_y);
 
@@ -154,9 +154,9 @@ export const GraphicsComponent = Vue.extend({
                 // this.ball.move(delta_x,delta_y);
 
                 if (delta_y > 0)
-                    this.moveBall(1, MoveDirection.DOWN);//this.moveBall(Math.abs(delta_y), MoveDirection.DOWN);
+                    this.moveBall(Math.abs(delta_y), MoveDirection.DOWN);
                 else
-                    this.moveBall(1, MoveDirection.UP);//this.moveBall(Math.abs(delta_y), MoveDirection.UP);
+                    this.moveBall(Math.abs(delta_y), MoveDirection.UP);
             }
 
 
