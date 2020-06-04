@@ -1,7 +1,7 @@
 import { createSecureContext } from "tls";
 
 export class Gravity {
-          private gravity_acc: number;          // g = 10 m/s^2; 1000 should be choosen
+          private gravity_acc: number;          
           private roll_coefficent: number;        // between 0.01 and 0.2
           private angle_threshold = 0.5;
           
@@ -20,18 +20,19 @@ export class Gravity {
                     let forward_acc = this.gravity_acc * Math.sin(Math.abs(angle)*Math.PI/180);
                     let roll_resistance_acc = this.gravity_acc * this.roll_coefficent * Math.cos(Math.abs(angle)*Math.PI/180);
 
-                    // roll_resistance_acc zeigt immer entgegen der roll_geschwindigkeits_richtung NICHT entgegen der forward_acc!!!
-
                     if (angle < 0)
                     {
                               forward_acc *= -1;
                     }
 
-                    if (current_velocity > 0)
+                    // roll_resistance_acc zeigt immer entgegen der roll_geschwindigkeits_richtung NICHT entgegen der forward_acc!!!
+                    if ((current_velocity > 0) && (roll_resistance_acc > 0))
                               roll_resistance_acc *= -1;
 
                     // if (current_velocity == 0)
                     //           roll_resistance_acc = 0;
+
+                    // console.log("1current velocity: "+current_velocity+ " roll resistance: "+ roll_resistance_acc+" forward acc: "+forward_acc);
 
                     if (current_velocity == 0)
                     {
@@ -39,7 +40,7 @@ export class Gravity {
                                         return 0;
                     }    
 
-                    return forward_acc-roll_resistance_acc;
+                    return forward_acc+roll_resistance_acc;
           }
 
           public calcVelocity(angle: number, current_velocity: number, delta_time: number)
@@ -57,6 +58,8 @@ export class Gravity {
                                         new_velocity = 0;
                               }
                     }
+
+                    // console.log("2new_velocity: "+new_velocity+" current_accy: "+current_acc);
 
                     return new_velocity;
           }

@@ -1,8 +1,11 @@
 import Vue from 'vue';
 
+let beta: number|null = 0;
+let gamma: number|null = 0;
+
 export const ControlDeviceComponent = Vue.extend({
     data: () => ({
-        loc: location
+        loc: location,
     }),
     props: {
         connected: {
@@ -33,15 +36,19 @@ export const ControlDeviceComponent = Vue.extend({
     </div>
 `,
     mounted: function() {
-        //let container = document.createElement('div')
-        //this.$el.appendChild(container);
-        //this.$emit('pixi-app', pixiApp);
-        console.log("test if controlDevice only");
+        // console.log("test if controlDevice only");
         if((window as any).DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', (event) => {
-                if (this.connected == true)
-                    this.$emit('sensor-data', event.beta, event.gamma);
+                beta = event.beta;
+                gamma = event.gamma;
             });
+            
+            window.setInterval(() => {
+                if (this.connected == true)
+                {
+                    this.$emit('sensor-data', beta, gamma);
+                }   
+            }, 50);
         }
     }
 });

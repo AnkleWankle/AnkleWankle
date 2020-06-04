@@ -14,7 +14,7 @@ const walls_thickness:number = 5;
 const walls_distance:number = game_width / 13;
 const walls_first_x:number = 5;
 const walls_first_y:number = 5;
-let physics_gravity: Gravity = new Gravity(450, 0.1);
+let physics_gravity: Gravity = new Gravity(2450, 0.15);
 // let ball:Ball;
 // let ball_rendered:PIXI.Graphics;
 let mazeGenerator: MazeGenerator;
@@ -38,7 +38,7 @@ enum MoveDirection {
 
 export const GraphicsComponent = Vue.extend({
     data: () => ({
-        ball: new Ball((walls_distance/3),0x000000, walls_distance, (walls_distance/2) + walls_first_x,(walls_distance/2) + walls_first_y, 0, 0),
+        ball: new Ball((walls_distance/4),0x000000, walls_distance, (walls_distance/2) + walls_first_x,(walls_distance/2) + walls_first_y, 0, 0),
         ball_rendered: new PIXI.Graphics(),
         maze: new Maze(game_width, game_height),
         walls: new PIXI.Graphics(),
@@ -128,74 +128,36 @@ export const GraphicsComponent = Vue.extend({
         onControlData(beta: number, gamma: number) {
             if ((!this.paused) && (this.gameFinished == false))
             {
-                // console.log("GraphicsComponent got control data: x=", x, "y=", y);
-                // let d = new Date();
-                // let ts =  d.getTime();
-                let delta_time = 0.1;//ts-timestamp;
-                // timestamp = ts;
+                let delta_time = 0.05;
 
                 let current_v_x = physics_gravity.calcVelocity(gamma, this.ball.v_x, delta_time);
-                // ball.v_x = current_v_x;
+                // this.ball.v_x = current_v_x;
                 let delta_x = Math.round(physics_gravity.calcDeltaPosition(current_v_x, delta_time));
 
-                // console.log("GraphicsComponent got control data: x=", delta_x);
-
-                // this.ball_rendered.x += delta_x;
-                // ball.move(delta_x,+0);
+                let x_no_wall = true;
 
                 if (delta_x > 0)
-                    this.moveBall(Math.abs(delta_x), MoveDirection.RIGHT);
+                    x_no_wall = this.moveBall(Math.abs(delta_x), MoveDirection.RIGHT);
                 else
-                    this.moveBall(Math.abs(delta_x), MoveDirection.LEFT);
+                    x_no_wall = this.moveBall(Math.abs(delta_x), MoveDirection.LEFT);
+
+                if (x_no_wall == false)
+                    this.ball.v_x = 0;
 
                 let current_v_y = physics_gravity.calcVelocity(beta, this.ball.v_y, delta_time);
-                // ball.v_y = current_v_y;
+                // this.ball.v_y = current_v_y;
                 let delta_y = Math.round(physics_gravity.calcDeltaPosition(current_v_y, delta_time));
 
-                // console.log("GraphicsComponent got control data: y=", delta_y);
-
-                // this.ball_rendered.y += delta_y;
-                // this.ball.move(delta_x,delta_y);
+                let y_no_wall = true;
 
                 if (delta_y > 0)
-                    this.moveBall(Math.abs(delta_y), MoveDirection.DOWN);
+                    y_no_wall = this.moveBall(Math.abs(delta_y), MoveDirection.DOWN);
                 else
-                    this.moveBall(Math.abs(delta_y), MoveDirection.UP);
+                    y_no_wall = this.moveBall(Math.abs(delta_y), MoveDirection.UP);
+
+                if (y_no_wall == false)
+                    this.ball.v_y = 0;
             }
-
-
-            /***************************** */
-            // let delta_x: number;
-
-            // if (gamma > 10)
-            //     delta_x = 1;
-            // else if (gamma < -10)
-            //     delta_x = -1;
-            // else
-            //     delta_x = 0;
-
-
-            // let delta_y: number;
-
-            // if (beta > 10)
-            //     delta_y = 1;
-            // else if (beta < -10)
-            //     delta_y = -1;
-            // else
-            //     delta_y = 0;
-
-            // console.log("GraphicsComponent got control data: x=", delta_x);
-
-            // // ball.v_x += delta_x;
-            // ball_rendered.x += delta_x;
-            // ball.move(delta_x,+0);
-
-            // // ball.v_y += delta_x;
-            // ball_rendered.y += delta_y;
-            // ball.move(+0,delta_y);
-            /***************************** */
-
-            // TODO
         },
         resetBall: function () {
             pixiApp.stage.removeChild(this.ball_rendered);
