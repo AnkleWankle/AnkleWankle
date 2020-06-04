@@ -39,7 +39,8 @@ export const ControlDeviceComponent = Vue.extend({
         console.log("test if controlDevice only");
         if((window as any).DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', (event) => {
-                this.$emit('sensor-data', event.beta, event.gamma);
+                if (this.connected == true)
+                    this.$emit('sensor-data', event.beta, event.gamma);
             });
         }
     }
