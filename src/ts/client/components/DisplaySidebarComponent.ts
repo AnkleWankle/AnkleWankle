@@ -17,6 +17,11 @@ export const DisplaySidebarComponent = Vue.extend({
             type: Boolean,
             default: true,
             required: true
+        },
+        gameFinished: {
+            type: Boolean,
+            default: false,
+            required: true
         }
     },
     template: `
@@ -66,14 +71,14 @@ export const DisplaySidebarComponent = Vue.extend({
                 <div class="col">
                     <p class="textcenter" > <canvas id="canvas"> </canvas> </p>
                 </div>
-            </div> 
+            </div>
         </div>
     </div>
 `,
     mounted: function() {
         var QRCode = require('qrcode')
         var canvas = document.getElementById('canvas')
-        
+
         QRCode.toCanvas(canvas, location.href, {scale:3, margin: 0, color: {light: '#909090'}}, function (error:any) {
             if (error) {
                 console.error(error)
@@ -83,23 +88,40 @@ export const DisplaySidebarComponent = Vue.extend({
         })
     },
     methods: {
-        togglePausedStatus: function () {
-            if (this.connected) {
-                if (this.paused) {
-                    this.timer.startTimer();
-                } else {
-                    this.timer.stopTimer();
+        togglePausedStatus: function (force = false) {
+            if (this.connected || force) {
+                if (this.paused && !this.gameFinished){
+                    this.startClock();
+                    this.$emit("change-paused");
+                } else if (!this.paused) {
+                    this.stopClock();
+                    this.$emit("change-paused");
                 }
-                //console.log("Displaysidebar before emit");
-                this.$emit("change-paused");
             }
         },
         reset: function () {
             if (this.connected) {
                 this.$emit("pause-game");
-                this.timer.stopTimer();
-                this.timer.reset();
+                this.stopClock();
+                this.resetClock();
                 this.$emit("reset-ball");
+            }
+        },
+        stopClock: function () {
+            this.timer.stopTimer();
+        },
+        startClock: function () {
+            this.timer.startTimer();
+        },
+        resetClock: function () {
+            this.timer.reset();
+        }
+    },
+    watch: {
+        connected: function(newValue, oldValue) {
+            console.log(`connected`, newValue, oldValue);
+            if(oldValue && !newValue && !this.paused) {
+                this.togglePausedStatus(true);
             }
         }
     }

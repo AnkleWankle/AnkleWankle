@@ -7,7 +7,7 @@ export namespace Protocol {
 
     export function on<MessageType extends string, OnReturnType>(socket: SocketI<OnReturnType, any>, messageType: MessageType, callback: CallbackTypeFromMessageType<MessageType>) {
         return socket.on(messageType, function(this: any, ...args: any[]) {
-            console.log("received", messageType, args);
+            // console.log("received", messageType, args);
             return (callback as any).apply(this, args);
         });
     }
