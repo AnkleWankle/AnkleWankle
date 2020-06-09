@@ -15,11 +15,9 @@ const walls_distance:number = game_width / 13;
 const walls_first_x:number = 5;
 const walls_first_y:number = 5;
 let physics_gravity: Gravity = new Gravity(2450, 0.15);
-// let ball:Ball;
-// let ball_rendered:PIXI.Graphics;
 let mazeGenerator: MazeGenerator;
-
 let timestamp:number;
+let game_finished = false;
 let pixiApp:PIXI.Application = new PIXI.Application({
     width: canvas_width,
     height: canvas_height,
@@ -58,66 +56,19 @@ export const GraphicsComponent = Vue.extend({
     },
     template: '<div></div>',
     mounted: function() {
-
-        //this.$el.appendChild(pixiApp.view);
-        //this.$emit('pixi-app', pixiApp);
         pixiApp.view.style.position = 'absolute';
         pixiApp.view.style.left = '42%';
         pixiApp.view.style.top = '50%';
         pixiApp.view.style.transform = 'translate3d( -42%, -50%, 0)';
         document.body.appendChild(pixiApp.view);
 
-        // const maze:Maze = new Maze(game_width, game_height);
-        // let mazeGenerator:MazeGenerator;
-
-        //Container that contains the walls of the labyrinth
-        // let wall_container = new PIXI.Container();
-        // let walls: PIXI.Graphics;
-        // let ball: Ball;
-        // let ball_rendered = new PIXI.Graphics();
-
-
         this.initialize();
         pixiApp.stage.addChild(this.wall_container);
         pixiApp.stage.addChild(this.ball_rendered);
 
-        // let i = 0;
         let draw = () => {
-            // if(i < 100000 && !this.paused) {
-            //     if(i<150){
-            //         this.moveBall(1, MoveDirection.RIGHT);
-            //     }
-            //     else if(i<300){
-            //         this.moveBall(1, MoveDirection.LEFT);
-            //     }
-            //     else if(i<600){
-            //         this.moveBall(1, MoveDirection.DOWN);
-            //     }
-            //     else if(i<1135){
-            //         let isEven:boolean = (i%2) == 0;
-            //         switch(isEven){
-            //             case true:
-            //                 this.moveBall(1, MoveDirection.RIGHT);
-            //                 break;
-            //             case false:
-            //                 this.moveBall(1, MoveDirection.UP);
-            //                 break;
-            //             default:
-            //                 break;
-            //         }
-            //     }
-            //     else{
-            //         this.moveBall(1, MoveDirection.LEFT);
-            //     }
-            //     pixiApp.render();
-            //     i++;
-            // }
-            // if(i == 1500){
-            //     game_finished = true;
-            // }
             pixiApp.render();
-            if(this.gameFinished){}
-            else{
+            if(!this.gameFinished) {
                 requestAnimationFrame(draw);
             }
         };
@@ -131,7 +82,6 @@ export const GraphicsComponent = Vue.extend({
                 let delta_time = 0.05;
 
                 let current_v_x = physics_gravity.calcVelocity(gamma, this.ball.v_x, delta_time);
-                // this.ball.v_x = current_v_x;
                 let delta_x = Math.round(physics_gravity.calcDeltaPosition(current_v_x, delta_time));
 
                 let x_no_wall = true;
@@ -145,7 +95,6 @@ export const GraphicsComponent = Vue.extend({
                     this.ball.v_x = 0;
 
                 let current_v_y = physics_gravity.calcVelocity(beta, this.ball.v_y, delta_time);
-                // this.ball.v_y = current_v_y;
                 let delta_y = Math.round(physics_gravity.calcDeltaPosition(current_v_y, delta_time));
 
                 let y_no_wall = true;
@@ -173,10 +122,8 @@ export const GraphicsComponent = Vue.extend({
         initialize() {
             mazeGenerator = new MazeGenerator(this.maze);
             mazeGenerator.generateMaze();
-            // this.walls = new PIXI.Graphics();
             this.maze.draw(this.walls);
             this.wall_container.addChild(this.walls);
-            // ball = new Ball((walls_distance/3),0x000000, walls_distance, (walls_distance/2) + walls_first_x,(walls_distance/2) + walls_first_y, 0, 0);
             this.ball_rendered.beginFill(this.ball.color);
             console.log("initialize" + this.ball.x + " " + this.ball.y);
             this.ball_rendered.drawCircle(this.ball.x, this.ball.y, this.ball.radius);
