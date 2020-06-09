@@ -16,8 +16,6 @@ const walls_first_x:number = 5;
 const walls_first_y:number = 5;
 let physics_gravity: Gravity = new Gravity(2450, 0.15);
 let mazeGenerator: MazeGenerator;
-let timestamp:number;
-let game_finished = false;
 let pixiApp:PIXI.Application = new PIXI.Application({
     width: canvas_width,
     height: canvas_height,
